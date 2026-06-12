@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "Bash(findstr:*)",
+      "Bash(head:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(sed:*)",
+      "Bash(wc:*)",
+      "Bash(echo:*)",
+      "Bash(Get-ChildItem:*)",
+      "Bash(Get-Content:*)",
+      "Bash(Select-String:*)",
+
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(git stash:*)",
+
+      "Bash(npm run lint:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(pnpm run test:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(npx jest:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git push --force:*)",
+      "Bash(npm publish:*)",
+      "Bash(pnpm publish:*)",
+      "Bash(cdk *)",
+      "Bash(npx cdk *)",
+      "Bash(pnpm cdk *)",
+      "Bash(npm run cdk *)"
+    ],
+    "ask": ["Bash(git commit:*)"],
+    "defaultMode": "acceptEdits"
+  }
+}
