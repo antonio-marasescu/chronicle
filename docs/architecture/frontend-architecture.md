@@ -4,7 +4,7 @@ Campaign and world management tool for tabletop RPGs, featuring interactive map 
 
 ## Tech Stack
 - **Framework**: Angular (signals-based, zoneless)
-- **UI Library**: PrimeNG + Tailwind CSS
+- **UI Library**: DaisyUI + Tailwind CSS
 - **Graphics**: PixiJS (interactive map rendering)
 - **Language**: TypeScript (strict mode)
 
@@ -14,13 +14,17 @@ Campaign and world management tool for tabletop RPGs, featuring interactive map 
 chronicle-ui/
 ├── src/
 │   ├── app/
+│   │   ├── clib/                    # Reusable component library
+│   │   │   ├── components/          # All reusable UI components
+│   │   │   ├── directives/          # Shared directives
+│   │   │   └── types/               # Component-related types
+│   │   │
 │   │   ├── core/                    # General-purpose shared code
-│   │   │   ├── components/          # All custom reusable components
 │   │   │   ├── services/            # Singleton services (HTTP, config, logging)
 │   │   │   ├── auth/                # Authentication (services, guards, interceptors)
 │   │   │   ├── interceptors/        # HTTP interceptors (error handling, logging)
 │   │   │   ├── guards/              # Route guards (authorization, feature flags)
-│   │   │   ├── types/               # Shared TypeScript types and interfaces
+│   │   │   ├── types/               # Shared TypeScript types
 │   │   │   └── utils/               # Utility functions and helpers
 │   │   │
 │   │   ├── features/                # Feature modules (lazy-loaded)
@@ -39,19 +43,28 @@ chronicle-ui/
 │       └── ...
 ```
 
-## Core vs Features
+## Directory Organization
+
+**Component Library** (`/clib`)
+- Angular wrapper components around DaisyUI CSS classes
+- Provides abstraction layer for easy library replacement
+- Shared directives and component utilities
+- Component-related types
+- Never imports from `/core` or `/features`
+- **Purpose**: Encapsulate DaisyUI implementation details so features use custom Angular components, not raw CSS classes
 
 **Core Directory** (`/core`)
 - General-purpose, application-wide functionality
 - Singleton services instantiated once at application startup
-- Shared components used across multiple features (e.g., header, footer, error pages)
 - Cross-cutting concerns (auth, HTTP, logging, error handling)
 - Never imports from `/features`
+- Can import from `/clib` for UI components
 
 **Features Directory** (`/features`)
 - Self-contained feature modules with domain-specific logic
 - Lazy-loaded via Angular routing for optimal bundle size
-- Each feature can import from `/core` but not from other features
+- Each feature can import from `/core` and `/clib` but not from other features
+- **Should use `/clib` components instead of raw DaisyUI classes**
 - Feature-based code splitting for performance optimization
 
 ## Architecture Principles
@@ -63,15 +76,18 @@ chronicle-ui/
 - Core services manage global application state
 
 ### Styling
-- PrimeNG components for all UI elements
-- Tailwind CSS exclusively for layout and positioning
-- No custom SCSS; leverage PrimeNG theming system
+- DaisyUI CSS classes wrapped in Angular components (`/clib`)
+- Features consume Angular wrapper components, not raw DaisyUI classes
+- Tailwind CSS for styling and layout
+- No custom SCSS; use Tailwind utility classes and DaisyUI component classes within wrapper components
 
 ### Code Organization
 - Lazy-loaded feature modules under `/features`
 - Feature-based routing and code splitting
 - Strict TypeScript with ESLint enforcement
 - Clear separation between core (shared) and feature-specific code
+- **Use `type` instead of `interface`** for all type definitions
+- **No barrel exports/re-exports** - Import directly from source files, not index.ts
 
 ### Configuration
 - Runtime environment variables via `app.config.json` asset
@@ -86,13 +102,16 @@ chronicle-ui/
 - Feature services consume core HTTP services
 
 ### Authentication Integration
-- AWS Amplify UI Angular components for Cognito connection
+- Direct Cognito SDK integration (AWS SDK for JavaScript)
 - No Amplify framework or backend management
-- Direct Cognito SDK integration via Amplify UI helpers
 - Auth guards protect feature routes
+- Custom login components built with DaisyUI
 
 ### Custom Components
-- PixiJS-based interactive map with touch/mouse interaction
+- **Component library approach**: Wrap DaisyUI CSS classes in Angular components (`/clib`)
+- **Abstraction layer**: Features use wrapper components, not raw CSS classes
+- **Library independence**: Easy to replace DaisyUI by updating wrapper implementations
+- PixiJS-based interactive map with touch/mouse interaction (in `/clib/components`)
 - Mobile-first responsive design
 
 ### Component Standards
@@ -106,12 +125,13 @@ chronicle-ui/
 ## Security
 
 ### Authentication Flow (Frontend)
-1. User provides credentials via custom login UI
+1. User provides credentials via custom login UI (DaisyUI components)
 2. AWS Cognito validates credentials and returns JWT token
 3. Frontend stores JWT and uses HTTP interceptor to attach it to all outgoing API requests
 
 ### Security Principles
-- Custom authentication UI using Amplify UI Angular components
-- Direct Cognito SDK integration (Amplify framework not used for backend/hosting)
+- Custom authentication UI using DaisyUI components
+- Direct Cognito SDK integration (AWS SDK for JavaScript)
+- No Amplify framework dependency
 - JWT-based stateless authentication
 - Token automatically attached via Angular HTTP interceptor

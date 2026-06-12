@@ -8,6 +8,41 @@ Campaign and world management tool for tabletop RPGs - Backend infrastructure.
 - **Database**: AWS DynamoDB
 - **Authentication**: AWS Cognito
 
+## Folder Structure
+
+### chronicle-api
+
+```
+chronicle-api/
+├── src/
+│   ├── handler.ts                # Main Lambda entry point (API Gateway integration)
+│   ├── core/                     # Shared backend infrastructure
+│   │   ├── dtos/                 # Request/response DTOs with Zod schemas
+│   │   ├── domain/               # Domain models and entities
+│   │   ├── services/             # Shared services (database, logging, etc.)
+│   │   └── utils/                # Utility functions and helpers
+│   │
+│   └── features/                 # Feature modules
+│       ├── {feature-name}/       # Example: campaigns, worlds, characters
+│       │   ├── api/              # API handlers for feature endpoints
+│       │   ├── services/         # Feature business logic
+│       │   └── types/            # Feature-specific types
+│       └── ...
+└── package.json
+```
+
+### chronicle-auth
+
+```
+chronicle-auth/
+├── src/
+│   ├── handler.ts                # Main Lambda entry point (auth operations)
+│   ├── dtos/                     # Auth-related DTOs with Zod schemas
+│   ├── services/                 # Cognito integration services
+│   └── utils/                    # Auth utility functions
+└── package.json
+```
+
 ## Lambda Functions
 
 ### 1. Authorization Lambda (`/chronicle-auth`)
@@ -17,25 +52,33 @@ Campaign and world management tool for tabletop RPGs - Backend infrastructure.
 - User registration and password management
 - Standalone function, not behind API Gateway authorization
 
-### 2. API Lambda(s) (`/chronicle-api`)
+### 2. API Lambda (`/chronicle-api`)
 - Business logic for campaigns, worlds, characters, timelines, maps
 - Protected by API Gateway JWT authorizer
 - Receives authenticated user context from validated token
 - CRUD operations on DynamoDB
-- Domain-driven function separation (per feature/resource)
+- Feature-based organization
 
 ## Architecture Principles
 
+### Code Organization
+- **Core directory** - Shared infrastructure (DTOs, domain models, services, utils)
+- **Features directory** - Feature modules with API handlers and business logic
+- Feature-based separation for scalability
+- Clear distinction between infrastructure and business logic
+
 ### API Design
-- Serverless functions per endpoint/domain
+- Single Lambda per service (chronicle-api, chronicle-auth)
+- Main `handler.ts` routes requests to feature API handlers
 - RESTful API conventions
 - Separation of auth concerns from business logic
 
 ### Data Validation
-- **All DTOs defined using Zod schemas**
-- Validation performed using Zod's `.parse()` or `.safeParse()` methods
-- Type-safe request/response contracts
+- **Zod schemas** define validation rules in `core/dtos/`
+- TypeScript types inferred from schemas using `z.infer<typeof Schema>`
+- Validation performed at API handler entry points
 - Runtime validation ensures data integrity at API boundaries
+- Error responses follow consistent format
 
 ### Data Layer
 - DynamoDB single-table design (following Alex DeBrie's principles)

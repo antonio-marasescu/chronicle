@@ -29,7 +29,7 @@ When the user presents a feature idea, your first job is to understand what they
 Reference the architecture docs at `@docs/architecture/` to ask informed questions. The user has a serverless AWS stack (Lambda + API Gateway + DynamoDB + Cognito) with an Angular frontend.
 
 **Frontend considerations:**
-- How does this show up in the UI? (PrimeNG components? PixiJS for maps?)
+- How does this show up in the UI? (Components? PixiJS for maps?)
 - Is this part of an existing feature module or a new one under `/features`?
 - What user interactions are involved?
 - Does this need real-time updates or is request/response sufficient?
@@ -153,12 +153,10 @@ Quick overview of what campaigns are and why they matter.
 - Feature: `/features/campaigns`
 - Component: `CampaignListComponent`
 - Shows user's campaigns (as DM or player)
-- PrimeNG DataView component
 
 **Campaign Detail View**
 - Component: `CampaignDetailComponent`
 - Tabs: Overview, Characters, Sessions, Timeline, Map
-- Uses PrimeNG TabView
 
 ## Technical Considerations
 
