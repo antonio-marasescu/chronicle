@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "prettier": "prettier",
-    "prettier:write": "prettier . --write --config .prettierrc",
-    "prettier:check": "prettier . --check --config .prettierrc"
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\""
   },
   "private": true,
   "packageManager": "pnpm@11.6.0",
