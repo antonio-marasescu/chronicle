@@ -3,10 +3,13 @@
 Campaign and world management tool for tabletop RPGs - Backend infrastructure.
 
 ## Tech Stack
-- **Runtime**: AWS Lambda (Node.js/TypeScript)
+- **Framework**: NestJS
+- **Runtime**: AWS Lambda (Node.js/TypeScript) + Local Express Server
+- **Lambda Adapter**: @vendia/serverless-express
 - **API Gateway**: AWS API Gateway (REST/HTTP)
 - **Database**: AWS DynamoDB
 - **Authentication**: AWS Cognito
+- **Validation**: Zod
 
 ## Folder Structure
 
@@ -15,19 +18,30 @@ Campaign and world management tool for tabletop RPGs - Backend infrastructure.
 ```
 chronicle-api/
 ├── src/
-│   ├── handler.ts                # Main Lambda entry point (API Gateway integration)
+│   ├── main.ts                   # Local dev server (Express on port 3000)
+│   ├── lambda.ts                 # Lambda handler (production)
+│   ├── app.module.ts             # Root NestJS module
+│   │
 │   ├── core/                     # Shared backend infrastructure
 │   │   ├── dtos/                 # Request/response DTOs with Zod schemas
 │   │   ├── domain/               # Domain models and entities
-│   │   ├── services/             # Shared services (database, logging, etc.)
-│   │   └── utils/                # Utility functions and helpers
+│   │   ├── database/             # DynamoDB OneTable setup
+│   │   ├── guards/               # Auth guards (JWT validation)
+│   │   ├── interceptors/         # Logging, response transformation
+│   │   └── filters/              # Exception filters
 │   │
-│   └── features/                 # Feature modules
-│       ├── {feature-name}/       # Example: campaigns, worlds, characters
-│       │   ├── api/              # API handlers for feature endpoints
-│       │   ├── services/         # Feature business logic
-│       │   └── types/            # Feature-specific types
-│       └── ...
+│   └── features/                 # Feature modules (NestJS modules)
+│       ├── campaigns/
+│       │   ├── campaigns.module.ts
+│       │   ├── campaigns.controller.ts
+│       │   ├── campaigns.service.ts
+│       │   └── dto/
+│       ├── worlds/
+│       ├── characters/
+│       └── health/               # Health check endpoint
+│
+├── nest-cli.json                 # NestJS CLI configuration
+├── tsconfig.json                 # TypeScript configuration
 └── package.json
 ```
 
@@ -36,10 +50,22 @@ chronicle-api/
 ```
 chronicle-auth/
 ├── src/
-│   ├── handler.ts                # Main Lambda entry point (auth operations)
+│   ├── main.ts                   # Local dev server (Express on port 3001)
+│   ├── lambda.ts                 # Lambda handler (production)
+│   ├── app.module.ts             # Root NestJS module
+│   │
+│   ├── features/
+│   │   └── auth/
+│   │       ├── auth.module.ts
+│   │       ├── auth.controller.ts
+│   │       └── auth.service.ts
+│   │
 │   ├── dtos/                     # Auth-related DTOs with Zod schemas
 │   ├── services/                 # Cognito integration services
 │   └── utils/                    # Auth utility functions
+│
+├── nest-cli.json
+├── tsconfig.json
 └── package.json
 ```
 
@@ -59,19 +85,25 @@ chronicle-auth/
 - CRUD operations on DynamoDB
 - Feature-based organization
 
+## Local Development vs Lambda Deployment
+
+Both services run as standard NestJS Express servers locally (`main.ts`) with hot reload and full debugging support. For Lambda deployment, the same NestJS application is wrapped with `@vendia/serverless-express` (`lambda.ts`) which translates API Gateway events to Express requests, with server instances cached across warm starts for optimal performance.
+
 ## Architecture Principles
 
 ### Code Organization
-- **Core directory** - Shared infrastructure (DTOs, domain models, services, utils)
-- **Features directory** - Feature modules with API handlers and business logic
-- Feature-based separation for scalability
-- Clear distinction between infrastructure and business logic
+- **NestJS Modules** - Feature-based organization with dependency injection
+- **Core directory** - Shared infrastructure (DTOs, domain models, database, guards, interceptors)
+- **Features directory** - NestJS feature modules (module, controller, service)
+- Clear separation between infrastructure and business logic
 
 ### API Design
+- **NestJS Controllers** - Declarative routing with decorators (`@Get()`, `@Post()`, etc.)
+- **NestJS Services** - Business logic with dependency injection
 - Single Lambda per service (chronicle-api, chronicle-auth)
-- Main `handler.ts` routes requests to feature API handlers
 - RESTful API conventions
 - Separation of auth concerns from business logic
+- Consistent error handling with exception filters
 
 ### Data Validation
 - **Zod schemas** define validation rules in `core/dtos/`
@@ -85,12 +117,6 @@ chronicle-auth/
 - OneTable ODM for schema modeling and data access
 - Access patterns designed around query requirements
 - Composite keys for hierarchical data relationships (campaigns → worlds → characters → timelines)
-
-## Deployment & DevOps
-
-**Hosting**: AWS infrastructure (Lambda, API Gateway, DynamoDB, Cognito, S3/CloudFront for frontend)
-**CI/CD**: _(To be documented)_
-**Testing**: _(To be documented)_
 
 ## Security & Authentication
 

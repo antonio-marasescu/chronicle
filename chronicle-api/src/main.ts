@@ -1,19 +1,18 @@
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('Event:', JSON.stringify(event, null, 2));
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
-    },
-    body: JSON.stringify({
-      message: 'Chronicle API',
-      path: event.path,
-      method: event.httpMethod
-    })
-  };
-};
+  app.enableCors({
+    origin: '*',
+    credentials: true
+  });
+
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+
+  console.log(`🚀 Chronicle API running on http://localhost:${port}`);
+}
+
+void bootstrap();
