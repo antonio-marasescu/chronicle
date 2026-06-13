@@ -43,5 +43,32 @@
     ],
     "ask": ["Bash(git commit:*)"],
     "defaultMode": "acceptEdits"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/block-env-files.sh",
+            "statusMessage": "Checking file security..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/prettier-format.sh",
+            "statusMessage": "Formatting with Prettier...",
+            "async": true
+          }
+        ]
+      }
+    ]
   }
 }
