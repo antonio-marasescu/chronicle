@@ -1,5 +1,5 @@
-import { AppRoutesType } from '../types/app/app-routes.types';
-
-export const AppRoutes: AppRoutesType = {
-  Home: ''
+export const AppRoutes = {
+  Home: {
+    Base: 'home'
+  }
 } as const;
