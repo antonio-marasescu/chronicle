@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 import { MapClickEvent, MapEditorMode, Tag } from '../../types/world.types';
 
 @Injectable()
@@ -7,17 +7,14 @@ export class MapRendererService {
   readonly tags = signal<Tag[]>([]);
   readonly lastClickEvent = signal<MapClickEvent | null>(null);
 
-  private mode: MapEditorMode = 'edit';
+  private mode: Signal<MapEditorMode> = signal<MapEditorMode>('edit');
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private currentImage: HTMLImageElement | null = null;
   private readonly onClick = this.handleClick.bind(this);
 
-  setMode(mode: MapEditorMode): void {
+  initialize(canvas: HTMLCanvasElement, mode: Signal<MapEditorMode>): void {
     this.mode = mode;
-  }
-
-  initialize(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.canvas.addEventListener('click', this.onClick);
@@ -59,7 +56,7 @@ export class MapRendererService {
     const x = (event.clientX - rect.left) * scaleX;
     const y = (event.clientY - rect.top) * scaleY;
 
-    if (this.mode === 'edit') {
+    if (this.mode() === 'edit') {
       const tag: Tag = {
         id: crypto.randomUUID(),
         label: '',

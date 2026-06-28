@@ -28,10 +28,6 @@ export class MapEditorComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      this.renderer.setMode(this.mode());
-    });
-
-    effect(() => {
       const event = this.renderer.lastClickEvent();
       if (event !== null) {
         this.mapClick.emit(event);
@@ -40,7 +36,7 @@ export class MapEditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.renderer.initialize(this.mapCanvas().nativeElement);
+    this.renderer.initialize(this.mapCanvas().nativeElement, this.mode);
   }
 
   ngOnDestroy(): void {
