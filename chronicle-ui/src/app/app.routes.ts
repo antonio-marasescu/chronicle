@@ -10,5 +10,9 @@ export const routes: Routes = [
   {
     path: AppRoutes.Home.Base,
     loadChildren: () => import('./features/home/home.routes').then(m => m.HOME_ROUTES)
+  },
+  {
+    path: AppRoutes.World.Base,
+    loadChildren: () => import('./features/world/world.routes').then(m => m.WORLD_ROUTES)
   }
 ];
