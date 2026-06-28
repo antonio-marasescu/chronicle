@@ -23,6 +23,7 @@
     "@angular/router": "^22.0.0",
     "@tailwindcss/postcss": "^4.3.0",
     "daisyui": "^5.5.23",
+    "pixi.js": "^8.19.0",
     "postcss": "^8.5.15",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.3.0",
