@@ -1,15 +1,21 @@
 import { Injectable, signal } from '@angular/core';
-import { Tag } from '../../types/world.types';
+import { MapClickEvent, MapEditorMode, Tag } from '../../types/world.types';
 
 @Injectable()
 export class MapRendererService {
   readonly initialized = signal(false);
   readonly tags = signal<Tag[]>([]);
+  readonly lastClickEvent = signal<MapClickEvent | null>(null);
 
+  private mode: MapEditorMode = 'edit';
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private currentImage: HTMLImageElement | null = null;
   private readonly onClick = this.handleClick.bind(this);
+
+  setMode(mode: MapEditorMode): void {
+    this.mode = mode;
+  }
 
   initialize(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
@@ -30,6 +36,7 @@ export class MapRendererService {
   clear(): void {
     this.currentImage = null;
     this.tags.set([]);
+    this.lastClickEvent.set(null);
     if (this.canvas && this.ctx) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
@@ -52,16 +59,19 @@ export class MapRendererService {
     const x = (event.clientX - rect.left) * scaleX;
     const y = (event.clientY - rect.top) * scaleY;
 
-    const tag: Tag = {
-      id: crypto.randomUUID(),
-      label: '',
-      color: '#ef4444',
-      x,
-      y
-    };
-
-    this.tags.update(tags => [...tags, tag]);
-    this.render();
+    if (this.mode === 'edit') {
+      const tag: Tag = {
+        id: crypto.randomUUID(),
+        label: '',
+        color: '#ef4444',
+        x,
+        y
+      };
+      this.tags.update(tags => [...tags, tag]);
+      this.render();
+    } else {
+      this.lastClickEvent.set({ x, y });
+    }
   }
 
   private render(): void {

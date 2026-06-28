@@ -1,3 +1,10 @@
+export type MapEditorMode = 'readonly' | 'edit';
+
+export type MapClickEvent = {
+  x: number;
+  y: number;
+};
+
 export type Tag = {
   id: string;
   label: string;
