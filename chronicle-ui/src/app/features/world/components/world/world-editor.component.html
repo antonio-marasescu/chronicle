@@ -1,0 +1,26 @@
+<div class="h-screen flex flex-col">
+  <div class="navbar bg-base-100 border-b border-base-300">
+    <div class="flex-1">
+      <span class="text-lg font-bold">World Editor</span>
+    </div>
+    <div class="flex-none gap-2">
+      <select class="select select-sm select-bordered" (change)="onActionTypeChange($event)">
+        @for (option of actionOptions; track option.value) {
+          <option [value]="option.value" [selected]="option.value === selectedActionType()">
+            {{ option.label }}
+          </option>
+        }
+      </select>
+      <input
+        type="file"
+        accept="image/*"
+        class="file-input file-input-sm file-input-bordered"
+        #fileInput
+        (change)="onFileSelected(fileInput)"
+      />
+    </div>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <app-map-editor [action]="currentAction()" [readonly]="false" />
+  </div>
+</div>

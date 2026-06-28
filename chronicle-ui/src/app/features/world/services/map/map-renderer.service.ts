@@ -1,9 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import { Tag } from '../../types/map.types';
-
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 5;
-const ZOOM_STEP = 0.25;
+import { DrawMetrics } from '../../types/map-render.types';
+import {
+  clampOffset,
+  computeDrawMetrics,
+  screenToWorld,
+  worldToScreen
+} from '../../utils/map/map.utils';
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../world.constants';
 
 @Injectable()
 export class MapRendererService {
@@ -14,6 +18,7 @@ export class MapRendererService {
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private currentImage: HTMLImageElement | null = null;
+  // Top-left corner of the visible viewport in world (image) coordinates
   private offsetX = 0;
   private offsetY = 0;
 
@@ -40,30 +45,43 @@ export class MapRendererService {
     this.render();
   }
 
-  zoomIn(): void {
-    const next = Math.min(this.zoom() + ZOOM_STEP, MAX_ZOOM);
-    this.zoom.set(next);
-    this.clampOffset();
+  zoomAt(direction: 1 | -1, cursorX: number, cursorY: number): void {
+    if (!this.canvas || !this.currentImage) return;
+
+    const oldZoom = this.zoom();
+    const newZoom = Math.max(MIN_ZOOM, Math.min(oldZoom + ZOOM_STEP * direction, MAX_ZOOM));
+    if (newZoom === oldZoom) return;
+
+    const metrics = this.getDrawMetrics();
+    const world = screenToWorld(cursorX, cursorY, metrics, oldZoom, this.offsetX, this.offsetY);
+
+    this.zoom.set(newZoom);
+
+    this.offsetX = world.x - (cursorX - metrics.drawOffsetX) / (metrics.scale * newZoom);
+    this.offsetY = world.y - (cursorY - metrics.drawOffsetY) / (metrics.scale * newZoom);
+
+    this.applyClampOffset();
     this.render();
   }
 
-  zoomOut(): void {
-    const next = Math.max(this.zoom() - ZOOM_STEP, MIN_ZOOM);
-    this.zoom.set(next);
-    this.clampOffset();
+  pan(deltaX: number, deltaY: number): void {
+    if (!this.currentImage || !this.canvas) return;
+    const z = this.zoom();
+    if (z <= MIN_ZOOM) return;
+    const metrics = this.getDrawMetrics();
+    this.offsetX -= deltaX / (metrics.scale * z);
+    this.offsetY -= deltaY / (metrics.scale * z);
+    this.applyClampOffset();
     this.render();
   }
 
   getCanvasCoordinates(event: MouseEvent): { x: number; y: number } | null {
     if (!this.canvas || !this.currentImage) return null;
     const rect = this.canvas.getBoundingClientRect();
-    const z = this.zoom();
     const pixelX = (event.clientX - rect.left) * (this.canvas.width / rect.width);
     const pixelY = (event.clientY - rect.top) * (this.canvas.height / rect.height);
-    return {
-      x: pixelX / z + this.offsetX,
-      y: pixelY / z + this.offsetY
-    };
+    const metrics = this.getDrawMetrics();
+    return screenToWorld(pixelX, pixelY, metrics, this.zoom(), this.offsetX, this.offsetY);
   }
 
   clear(): void {
@@ -84,48 +102,66 @@ export class MapRendererService {
     this.initialized.set(false);
   }
 
-  private clampOffset(): void {
+  private applyClampOffset(): void {
     if (!this.currentImage) return;
-    const z = this.zoom();
-    const maxOffsetX = this.currentImage.naturalWidth - this.currentImage.naturalWidth / z;
-    const maxOffsetY = this.currentImage.naturalHeight - this.currentImage.naturalHeight / z;
-    this.offsetX = Math.max(0, Math.min(this.offsetX, maxOffsetX));
-    this.offsetY = Math.max(0, Math.min(this.offsetY, maxOffsetY));
+    const clamped = clampOffset(
+      this.offsetX,
+      this.offsetY,
+      this.currentImage.naturalWidth,
+      this.currentImage.naturalHeight,
+      this.zoom()
+    );
+    this.offsetX = clamped.offsetX;
+    this.offsetY = clamped.offsetY;
+  }
+
+  private getDrawMetrics() {
+    if (!this.canvas || !this.currentImage) {
+      return { drawOffsetX: 0, drawOffsetY: 0, scale: 1 };
+    }
+    return computeDrawMetrics(
+      this.canvas.width,
+      this.canvas.height,
+      this.currentImage.naturalWidth,
+      this.currentImage.naturalHeight
+    );
   }
 
   private render(): void {
     if (!this.canvas || !this.ctx || !this.currentImage) return;
+
+    const rect = this.canvas.parentElement!.getBoundingClientRect();
+    this.canvas.width = rect.width;
+    this.canvas.height = rect.height;
+
+    const metrics = this.getDrawMetrics();
+    const z = this.zoom();
     const imgW = this.currentImage.naturalWidth;
     const imgH = this.currentImage.naturalHeight;
-    this.canvas.width = imgW;
-    this.canvas.height = imgH;
-
-    const z = this.zoom();
     const viewW = imgW / z;
     const viewH = imgH / z;
 
-    this.ctx.clearRect(0, 0, imgW, imgH);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.drawImage(
       this.currentImage,
       this.offsetX,
       this.offsetY,
       viewW,
       viewH,
-      0,
-      0,
-      imgW,
-      imgH
+      metrics.drawOffsetX,
+      metrics.drawOffsetY,
+      imgW * metrics.scale,
+      imgH * metrics.scale
     );
-    this.renderTags(z);
+    this.renderTags(z, metrics);
   }
 
-  private renderTags(z: number): void {
+  private renderTags(z: number, metrics: DrawMetrics): void {
     if (!this.ctx) return;
     for (const tag of this.tags()) {
-      const screenX = (tag.x - this.offsetX) * z;
-      const screenY = (tag.y - this.offsetY) * z;
+      const screen = worldToScreen(tag.x, tag.y, metrics, z, this.offsetX, this.offsetY);
       this.ctx.beginPath();
-      this.ctx.arc(screenX, screenY, tag.size * z, 0, Math.PI * 2);
+      this.ctx.arc(screen.x, screen.y, tag.size * metrics.scale, 0, Math.PI * 2);
       this.ctx.fillStyle = tag.color;
       this.ctx.fill();
       this.ctx.strokeStyle = '#ffffff';

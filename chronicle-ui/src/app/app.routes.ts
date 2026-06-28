@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: AppRoutes.Home.Base
+    redirectTo: AppRoutes.World.Base
   },
   {
     path: AppRoutes.Home.Base,

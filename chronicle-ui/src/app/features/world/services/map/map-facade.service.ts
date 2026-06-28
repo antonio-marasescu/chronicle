@@ -1,10 +1,8 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Tag, WorldMap } from '../../types/map.types';
-import { MapRendererService } from './map-renderer.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MapFacadeService {
-  private readonly renderer = inject(MapRendererService);
   private readonly maps = signal<WorldMap[]>([]);
   private readonly activeMapId = signal<string | null>(null);
 
@@ -19,7 +17,6 @@ export class MapFacadeService {
     const newMap: WorldMap = { ...map, id: crypto.randomUUID(), imageUrl };
     this.maps.update(maps => [...maps, newMap]);
     this.activeMapId.set(newMap.id);
-    this.renderer.loadImage(imageUrl);
   }
 
   removeMap(id: string): void {
@@ -30,7 +27,6 @@ export class MapFacadeService {
     this.maps.update(maps => maps.filter(m => m.id !== id));
     if (this.activeMapId() === id) {
       this.activeMapId.set(null);
-      this.renderer.clear();
     }
   }
 

@@ -4,6 +4,6 @@ export const WORLD_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./components/map/map-editor.component').then(m => m.MapEditorComponent)
+      import('./components/world/world-editor.component').then(m => m.WorldEditorComponent)
   }
 ];
