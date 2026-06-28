@@ -2,6 +2,7 @@ export type Tag = {
   id: string;
   label: string;
   color: string;
+  size: number;
   x: number;
   y: number;
 };

@@ -1,3 +1,8 @@
 <div class="h-full w-full relative">
-  <canvas #mapCanvas class="absolute inset-0 h-full w-full"></canvas>
+  <canvas
+    #mapCanvas
+    class="absolute inset-0 h-full w-full"
+    (click)="onCanvasClick($event)"
+    (wheel)="onWheel($event)"
+  ></canvas>
 </div>

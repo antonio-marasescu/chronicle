@@ -1,5 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { Tag, WorldMap } from '../../types/world.types';
+import { Tag, WorldMap } from '../../types/map.types';
 import { MapRendererService } from './map-renderer.service';
 
 @Injectable()
@@ -14,17 +14,11 @@ export class MapFacadeService {
     return this.maps().find(m => m.id === id) ?? null;
   });
 
-  addMap(name: string, image: File): void {
+  addMap(map: Omit<WorldMap, 'id'>, image: File): void {
     const imageUrl = URL.createObjectURL(image);
-    const map: WorldMap = {
-      id: crypto.randomUUID(),
-      name,
-      imageUrl,
-      layers: [],
-      tags: []
-    };
-    this.maps.update(maps => [...maps, map]);
-    this.activeMapId.set(map.id);
+    const newMap: WorldMap = { ...map, id: crypto.randomUUID(), imageUrl };
+    this.maps.update(maps => [...maps, newMap]);
+    this.activeMapId.set(newMap.id);
     this.renderer.loadImage(imageUrl);
   }
 
@@ -44,10 +38,20 @@ export class MapFacadeService {
     this.activeMapId.set(id);
   }
 
-  addTag(mapId: string, label: string, color: string, x: number, y: number): void {
-    const tag: Tag = { id: crypto.randomUUID(), label, color, x, y };
+  addTag(mapId: string, tag: Omit<Tag, 'id'>): void {
+    const newTag: Tag = { ...tag, id: crypto.randomUUID() };
     this.maps.update(maps =>
-      maps.map(m => (m.id === mapId ? { ...m, tags: [...m.tags, tag] } : m))
+      maps.map(m => (m.id === mapId ? { ...m, tags: [...m.tags, newTag] } : m))
+    );
+  }
+
+  updateTag(mapId: string, tagId: string, changes: Partial<Omit<Tag, 'id'>>): void {
+    this.maps.update(maps =>
+      maps.map(m =>
+        m.id === mapId
+          ? { ...m, tags: m.tags.map(t => (t.id === tagId ? { ...t, ...changes } : t)) }
+          : m
+      )
     );
   }
 
