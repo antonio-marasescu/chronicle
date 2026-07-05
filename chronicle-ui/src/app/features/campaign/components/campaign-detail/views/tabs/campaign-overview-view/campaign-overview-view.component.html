@@ -1,0 +1,31 @@
+<div class="space-y-6">
+  @if (editMode()) {
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text text-xl">Campaign Name</span>
+      </label>
+      <input
+        type="text"
+        [value]="campaign().name"
+        class="input input-bordered input-lg text-2xl"
+        placeholder="Enter campaign name"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text text-xl">Description</span>
+      </label>
+      <textarea
+        [value]="campaign().description"
+        class="textarea textarea-bordered textarea-lg text-lg h-48"
+        placeholder="Enter campaign description"
+      ></textarea>
+    </div>
+  } @else {
+    <div>
+      <h2 class="text-3xl font-bold mb-4">{{ campaign().name }}</h2>
+      <p class="text-lg">{{ campaign().description }}</p>
+    </div>
+  }
+</div>

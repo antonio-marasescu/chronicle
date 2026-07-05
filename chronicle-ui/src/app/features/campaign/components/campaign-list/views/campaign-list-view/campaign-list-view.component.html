@@ -1,0 +1,27 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  @for (campaign of campaigns(); track campaign.id) {
+    <div class="card bg-base-100 shadow-xl">
+      <figure>
+        <img
+          [src]="campaign.imageUrl || 'assets/images/campaigns/default.svg'"
+          [alt]="campaign.name"
+          class="w-full h-48 object-cover"
+        />
+      </figure>
+      <div class="card-body">
+        <h2 class="card-title text-2xl">{{ campaign.name }}</h2>
+        <p class="text-lg">{{ campaign.description }}</p>
+        <div class="card-actions justify-end gap-2">
+          <button class="btn btn-primary btn-soft btn-lg" (click)="editCampaign.emit(campaign.id)">
+            <span class="material-icons">edit</span>
+            Edit
+          </button>
+          <button class="btn btn-neutral btn-lg" (click)="viewCampaign.emit(campaign.id)">
+            <span class="material-icons">visibility</span>
+            View
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
