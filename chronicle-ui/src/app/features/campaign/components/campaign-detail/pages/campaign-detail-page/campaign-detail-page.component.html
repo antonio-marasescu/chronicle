@@ -27,26 +27,30 @@
 
     <app-campaign-detail-tabs-view [activeTab]="tab()" (tabChange)="navigateToTab($event)" />
 
-    <div class="bg-base-100 p-6 rounded-lg shadow-xl">
-      @switch (tab()) {
-        @case ('overview') {
+    @switch (tab()) {
+      @case ('overview') {
+        <div class="bg-base-100 p-6 rounded-lg shadow-xl">
           @if (mode() === CampaignDetailMode.Create) {
             <div>Create overview content</div>
           } @else {
             <app-campaign-overview-container [campaign]="campaign()!" [editMode]="isEditMode()" />
           }
-        }
-        @case ('world') {
-          <app-campaign-world-container />
-        }
-        @case ('chapters') {
-          <app-campaign-chapters-container />
-        }
-        @case ('npcs') {
-          <app-campaign-npcs-container />
-        }
+        </div>
       }
-    </div>
+      @case ('world') {
+        <app-campaign-world-container />
+      }
+      @case ('chapters') {
+        <div class="bg-base-100 p-6 rounded-lg shadow-xl">
+          <app-campaign-chapters-container />
+        </div>
+      }
+      @case ('npcs') {
+        <div class="bg-base-100 p-6 rounded-lg shadow-xl">
+          <app-campaign-npcs-container />
+        </div>
+      }
+    }
 
     @if (mode() === CampaignDetailMode.Create || isEditMode()) {
       <div class="mt-6 flex justify-end gap-4">

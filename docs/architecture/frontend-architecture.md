@@ -169,7 +169,7 @@ features/{feature-name}/
 ### Component Standards
 - **All components must have separate template files**: Each component must have both a `.ts` and `.html` file (no inline templates)
 - **No component-level styles**: No .scss or .css files; use Tailwind CSS classes in templates
-- **OnPush change detection required**: All components must use `ChangeDetectionStrategy.OnPush`
+- **OnPush change detection**: Angular v19+ uses `ChangeDetectionStrategy.OnPush` by default - do not explicitly specify it in component decorators unless overriding to `Default`
 - OnPush-compatible component design (zoneless optimization)
 - Follows Angular best practices and style guide
 - Feature modules are standalone and independently testable

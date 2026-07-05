@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+  <!-- Forest with multiple fantasy trees -->
+  <path d="M8 21h2v-3H8zM14 21h2v-3h-2z"/>
+  <!-- Left tree -->
+  <path d="M9 18l-3-5h1.5l-2-4h1.5L9 5l2 4h1.5l-2 4H12z"/>
+  <!-- Right tree -->
+  <path d="M15 18l-3-5h1.5l-2-4h1.5l2-4 2 4h1.5l-2 4h1.5z"/>
+  <!-- Mystical undergrowth -->
+  <ellipse cx="6" cy="20" rx="1.5" ry="0.8"/>
+  <ellipse cx="18" cy="20" rx="1.5" ry="0.8"/>
+  <ellipse cx="12" cy="20.5" rx="2" ry="0.8"/>
+</svg>

@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { MapAction, MapActionType, PlaceTagMetadata } from '../../types/map-action.types';
+import { MapAction, MapActionType } from '../../types/map-action.types';
 import { Tag } from '../../types/map.types';
 import { MapRendererService } from './map-renderer.service';
+import { CreateLocation } from '../../../../core/types/dtos/write/location-write.types';
 
 @Injectable()
 export class MapActionService {
@@ -15,12 +16,13 @@ export class MapActionService {
     }
   }
 
-  private handlePlaceTag(metadata: PlaceTagMetadata, x: number, y: number): void {
+  private handlePlaceTag(metadata: CreateLocation, x: number, y: number): void {
     const tag: Tag = {
       id: crypto.randomUUID(),
-      label: metadata.label,
+      label: metadata.name,
       color: metadata.color,
       size: metadata.size,
+      locationType: metadata.locationType,
       x,
       y
     };

@@ -8,6 +8,14 @@ import {
   worldToScreen
 } from '../../utils/map/map.utils';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../world.constants';
+import { LocationType } from '../../../../core/types/enums/location-type.enum';
+
+const LOCATION_ICON_PATHS: Record<LocationType, string> = {
+  [LocationType.City]: '/assets/icons/locations/city.svg',
+  [LocationType.Dungeon]: '/assets/icons/locations/dungeon.svg',
+  [LocationType.Wilderness]: '/assets/icons/locations/wilderness.svg',
+  [LocationType.Other]: '/assets/icons/locations/other.svg'
+};
 
 @Injectable()
 export class MapRendererService {
@@ -18,9 +26,24 @@ export class MapRendererService {
   private canvas: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private currentImage: HTMLImageElement | null = null;
+  private iconCache = new Map<LocationType, HTMLImageElement>();
   // Top-left corner of the visible viewport in world (image) coordinates
   private offsetX = 0;
   private offsetY = 0;
+
+  constructor() {
+    this.preloadIcons();
+  }
+
+  private preloadIcons(): void {
+    Object.entries(LOCATION_ICON_PATHS).forEach(([type, path]) => {
+      const img = new Image();
+      img.src = path;
+      img.onload = () => {
+        this.iconCache.set(type as LocationType, img);
+      };
+    });
+  }
 
   initialize(canvas: HTMLCanvasElement): void {
     this.canvas = canvas;
@@ -160,13 +183,39 @@ export class MapRendererService {
     if (!this.ctx) return;
     for (const tag of this.tags()) {
       const screen = worldToScreen(tag.x, tag.y, metrics, z, this.offsetX, this.offsetY);
+      const radius = tag.size * metrics.scale;
+
+      // Draw circle background
       this.ctx.beginPath();
-      this.ctx.arc(screen.x, screen.y, tag.size * metrics.scale, 0, Math.PI * 2);
+      this.ctx.arc(screen.x, screen.y, radius, 0, Math.PI * 2);
       this.ctx.fillStyle = tag.color;
       this.ctx.fill();
       this.ctx.strokeStyle = '#ffffff';
       this.ctx.lineWidth = 2;
       this.ctx.stroke();
+
+      // Draw icon
+      const iconImg = this.iconCache.get(tag.locationType);
+      if (iconImg && iconImg.complete) {
+        const iconSize = radius * 1.2;
+        this.ctx.drawImage(
+          iconImg,
+          screen.x - iconSize / 2,
+          screen.y - iconSize / 2,
+          iconSize,
+          iconSize
+        );
+      }
+
+      // Draw label if exists and zoom is high enough
+      if (tag.label && z > 1) {
+        this.ctx.font = `${10 * metrics.scale}px Arial`;
+        this.ctx.fillStyle = '#000000';
+        this.ctx.strokeStyle = '#ffffff';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeText(tag.label, screen.x, screen.y + radius + 12 * metrics.scale);
+        this.ctx.fillText(tag.label, screen.x, screen.y + radius + 12 * metrics.scale);
+      }
     }
   }
 }

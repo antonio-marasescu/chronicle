@@ -1,11 +1,17 @@
-<div class="flex flex-col lg:flex-row gap-6 h-[calc(100vh-20rem)]">
-  <!-- Sidebar - Empty for now -->
-  <div class="lg:w-1/3 space-y-4">
-    <!-- World options will go here -->
-  </div>
-
-  <!-- Map Display -->
-  <div class="lg:w-2/3 bg-base-300 rounded-lg overflow-hidden">
-    <app-map-editor [readonly]="false" [action]="{ type: mapActionType.PAN }" />
+<div class="flex w-full h-[calc(100vh-16rem)]">
+  <app-world-editor-menu
+    [menuItems]="menuItems"
+    [selectedAction]="selectedAction()"
+    (actionSelect)="onActionSelect($event)"
+    (fileSelect)="onFileSelected($event)"
+  />
+  @if (showTagEditor()) {
+    <app-world-tag-editor
+      [metadata]="tagMetadata()"
+      (metadataChange)="onTagMetadataChange($event)"
+    />
+  }
+  <div class="flex-1 h-full">
+    <app-map-editor [action]="currentAction()" [readonly]="false" />
   </div>
 </div>

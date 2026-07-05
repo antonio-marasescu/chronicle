@@ -8,6 +8,8 @@ export type Location = {
   description: string;
   backstory: string;
   locationType: LocationType;
+  color: string;
+  size: number;
   coordinates?: Point;
   parentLocationId?: string;
   createdAt: string;

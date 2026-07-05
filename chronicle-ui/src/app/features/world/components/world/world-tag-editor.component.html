@@ -1,0 +1,137 @@
+<div
+  class="card bg-base-100 border-r border-base-300 w-80 rounded-none shadow-lg h-full overflow-y-auto"
+>
+  <div class="card-body p-4 space-y-3">
+    <h3 class="card-title text-lg">Location Settings</h3>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Name</span>
+      </label>
+      <input
+        type="text"
+        [value]="metadata().name"
+        (input)="onNameChange($event)"
+        placeholder="Location name"
+        class="input input-bordered input-sm w-full"
+      />
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Type</span>
+      </label>
+      <select
+        [value]="metadata().locationType"
+        (change)="onLocationTypeChange($event)"
+        class="select select-bordered select-sm w-full"
+      >
+        @for (type of locationTypes; track type) {
+          <option [value]="type">
+            {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Description</span>
+      </label>
+      <textarea
+        [value]="metadata().description"
+        (input)="onDescriptionChange($event)"
+        placeholder="Brief description"
+        class="textarea textarea-bordered textarea-sm w-full h-20"
+      ></textarea>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Backstory</span>
+      </label>
+      <textarea
+        [value]="metadata().backstory"
+        (input)="onBackstoryChange($event)"
+        placeholder="Historical background"
+        class="textarea textarea-bordered textarea-sm w-full h-24"
+      ></textarea>
+    </div>
+
+    <div class="divider my-2"></div>
+
+    <h4 class="font-semibold text-sm">Marker Style</h4>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Color</span>
+      </label>
+      <div class="flex gap-2 items-center">
+        <input
+          type="color"
+          [value]="metadata().color"
+          (input)="onColorChange($event)"
+          class="w-12 h-10 rounded cursor-pointer"
+        />
+        <input
+          type="text"
+          [value]="metadata().color"
+          (input)="onColorChange($event)"
+          class="input input-bordered input-sm flex-1"
+        />
+      </div>
+    </div>
+
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text">Size: {{ metadata().size }}px</span>
+      </label>
+      <input
+        type="range"
+        min="4"
+        max="20"
+        [value]="metadata().size"
+        (input)="onSizeChange($event)"
+        class="range range-sm"
+      />
+      <div class="flex justify-between text-xs px-2 mt-1">
+        <span>Small</span>
+        <span>Large</span>
+      </div>
+    </div>
+
+    <div class="divider my-2"></div>
+
+    <div class="space-y-2">
+      <span class="text-sm font-semibold">Preview:</span>
+      <div class="flex items-center gap-2 p-2 bg-base-200 rounded">
+        <div class="relative">
+          <div
+            class="rounded-full border-2 border-white shadow-md flex items-center justify-center"
+            [style.background-color]="metadata().color"
+            [style.width.px]="metadata().size * 2"
+            [style.height.px]="metadata().size * 2"
+          >
+            <img
+              [src]="getLocationIconPath(metadata().locationType)"
+              alt="Location icon"
+              class="w-full h-full p-1"
+              [style.width.px]="metadata().size * 1.2"
+              [style.height.px]="metadata().size * 1.2"
+            />
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          @if (metadata().name) {
+            <div class="text-sm font-medium truncate">{{ metadata().name }}</div>
+          } @else {
+            <div class="text-sm text-base-content/50 italic">No name</div>
+          }
+          <div class="text-xs text-base-content/70">
+            {{ metadata().locationType.charAt(0).toUpperCase() + metadata().locationType.slice(1) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

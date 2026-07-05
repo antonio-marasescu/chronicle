@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+  <!-- Castle with towers and battlements -->
+  <path d="M3 21h18v-2H3v2z"/>
+  <path d="M19 9h-2V4h-2v2h-2V4h-2v2H9V4H7v5H5l-2 3v6h18v-6l-2-3zm-8 7h-2v-3h2v3zm4 0h-2v-3h2v3z"/>
+  <rect x="5" y="3" width="1" height="2"/>
+  <rect x="9" y="3" width="1" height="2"/>
+  <rect x="13" y="3" width="1" height="2"/>
+  <rect x="17" y="3" width="1" height="2"/>
+  <path d="M6 3h1v1H6zM10 3h1v1h-1zM14 3h1v1h-1zM18 3h1v1h-1z"/>
+</svg>

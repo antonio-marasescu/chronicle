@@ -4,9 +4,13 @@ export function computeDrawMetrics(
   canvasWidth: number,
   canvasHeight: number,
   imageWidth: number,
-  imageHeight: number
+  imageHeight: number,
+  fitMode: 'contain' | 'cover' = 'contain'
 ): DrawMetrics {
-  const scale = Math.min(canvasWidth / imageWidth, canvasHeight / imageHeight);
+  const scale =
+    fitMode === 'cover'
+      ? Math.max(canvasWidth / imageWidth, canvasHeight / imageHeight)
+      : Math.min(canvasWidth / imageWidth, canvasHeight / imageHeight);
   const drawOffsetX = (canvasWidth - imageWidth * scale) / 2;
   const drawOffsetY = (canvasHeight - imageHeight * scale) / 2;
   return { drawOffsetX, drawOffsetY, scale };
