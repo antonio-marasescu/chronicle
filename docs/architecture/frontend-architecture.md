@@ -67,6 +67,58 @@ chronicle-ui/
 - **Should use `/clib` components instead of raw DaisyUI classes**
 - Feature-based code splitting for performance optimization
 
+### Feature Component Structure
+
+Each feature follows a consistent structure with sub-features organized by page:
+
+```
+features/{feature-name}/
+├── components/
+│   ├── {page-name}/              # Sub-feature per page (e.g., campaign-list, campaign-detail)
+│   │   ├── pages/
+│   │   │   └── {page-name}-page/  # Page component in its own folder
+│   │   │       ├── {page-name}-page.component.ts
+│   │   │       └── {page-name}-page.component.html
+│   │   ├── containers/
+│   │   │   └── tabs/              # Tab-related containers (if applicable)
+│   │   │       └── {container-name}/
+│   │   │           └── {container-name}.component.ts
+│   │   └── views/
+│   │       ├── tabs/              # Tab-related views (if applicable)
+│   │       │   └── {view-name}/
+│   │       │       ├── {view-name}.component.ts
+│   │       │       └── {view-name}.component.html
+│   │       └── {view-name}/       # Non-tab views
+│   │           ├── {view-name}.component.ts
+│   │           └── {view-name}.component.html
+│   └── ...
+├── services/
+└── types/
+```
+
+**Component Layer Responsibilities:**
+
+- **Pages**: Route entry points, orchestrate containers and handle navigation
+  - Each page component must be in its own folder with separate `.ts` and `.html` files
+  - Handle navigation through `AppNavigationService` (never use `Router` or `RouterLink` directly)
+  - Manage page-level state and coordinate between containers
+  
+- **Containers**: Business logic, data fetching, and state management
+  - Each container must be in its own folder
+  - Bridge between views and services
+  - Handle data transformation and business rules
+  - Can contain templates inline (no separate HTML file required)
+  
+- **Views**: Pure presentation components
+  - Each view must be in its own folder with separate `.ts` and `.html` files
+  - Emit events for user interactions (never navigate directly)
+  - Receive data through inputs only
+  - No direct service dependencies (except in rare cases like facades)
+
+**Tab Organization:**
+- Tab-related containers and views are grouped under a `tabs/` subfolder
+- This keeps tab logic separate from other page components
+
 ## Architecture Principles
 
 ### State Management
@@ -115,12 +167,18 @@ chronicle-ui/
 - Mobile-first responsive design
 
 ### Component Standards
-- Components consist of TypeScript (.ts) and HTML (.html) files only
+- **All components must have separate template files**: Each component must have both a `.ts` and `.html` file (no inline templates)
 - **No component-level styles**: No .scss or .css files; use Tailwind CSS classes in templates
 - **OnPush change detection required**: All components must use `ChangeDetectionStrategy.OnPush`
 - OnPush-compatible component design (zoneless optimization)
 - Follows Angular best practices and style guide
 - Feature modules are standalone and independently testable
+
+### Navigation Standards
+- **All navigation must use `AppNavigationService`**: Never use Angular `Router` or `RouterLink` directly in components
+- **Views cannot navigate**: View components emit events; parent pages/containers handle navigation
+- **Route paths use constants**: All route paths defined in `app-routes.constants.ts` and used via `AppNavigationService`
+- Centralized navigation logic ensures consistency and easier refactoring
 
 ## Security
 

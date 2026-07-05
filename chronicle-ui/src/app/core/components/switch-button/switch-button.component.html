@@ -1,0 +1,16 @@
+<label
+  class="swap swap-rotate btn"
+  [class.btn-sm]="size() === 'sm'"
+  [class.btn-md]="size() === 'md'"
+  [class.btn-lg]="size() === 'lg'"
+>
+  <input type="checkbox" [checked]="checked()" (change)="onToggle()" />
+  <span class="swap-off flex items-center gap-2">
+    <span class="material-icons">{{ offOption().icon }}</span>
+    {{ offOption().label }}
+  </span>
+  <span class="swap-on flex items-center gap-2">
+    <span class="material-icons">{{ onOption().icon }}</span>
+    {{ onOption().label }}
+  </span>
+</label>

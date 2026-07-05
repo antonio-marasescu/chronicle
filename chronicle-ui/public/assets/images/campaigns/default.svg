@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a1a4a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a574;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b87333;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="swordGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e8c4a0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f4d8b8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d8b090;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="200" fill="transparent"/>
+
+  <g transform="translate(200, 100)">
+    <!-- Crossed Sword (left) -->
+    <g transform="rotate(-30)">
+      <rect x="-3" y="-50" width="6" height="70" fill="url(#swordGrad)" stroke="#b8864a" stroke-width="1.5"/>
+      <polygon points="-5,20 5,20 0,28" fill="url(#swordGrad)" stroke="#b8864a" stroke-width="1.5"/>
+      <rect x="-10" y="-40" width="20" height="6" fill="#e8a858" stroke="#c88640" stroke-width="1.5"/>
+      <circle cx="0" cy="-37" r="4" fill="#e8a858" stroke="#c88640" stroke-width="1.5"/>
+    </g>
+
+    <!-- Wand (right) -->
+    <g transform="rotate(30)">
+      <rect x="-2.5" y="-50" width="5" height="70" fill="#a8724c" stroke="#88522c" stroke-width="1.5"/>
+      <circle cx="0" cy="-52" r="6" fill="#ffa858" stroke="#e88840" stroke-width="2"/>
+      <circle cx="0" cy="-52" r="3" fill="#ffcc66" opacity="0.9"/>
+      <circle cx="-4" cy="-48" r="1.5" fill="#ffcc66" opacity="0.7"/>
+      <circle cx="4" cy="-48" r="1.5" fill="#ffcc66" opacity="0.7"/>
+    </g>
+
+    <!-- Shield (center, in front) -->
+    <path d="M-30,-20 Q-35,0 -30,30 L-15,42 Q0,48 15,42 L30,30 Q35,0 30,-20 Q0,-30 -30,-20 Z"
+          fill="url(#shieldGrad)"
+          stroke="#8a5a2a"
+          stroke-width="2"/>
+    <path d="M-25,-15 Q-28,0 -25,25 L-12,35 Q0,40 12,35 L25,25 Q28,0 25,-15 Q0,-23 -25,-15 Z"
+          fill="none"
+          stroke="#e8b888"
+          stroke-width="1.5"
+          opacity="0.5"/>
+    <circle cx="0" cy="5" r="8" fill="#e8a858" stroke="#c88640" stroke-width="2"/>
+  </g>
+</svg>
