@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+  <!-- Dark cave entrance with chains -->
+  <path d="M12 2L4 8v13h16V8l-8-6zm0 2.2L18 9v10h-4v-5h-4v5H6V9l6-4.8z"/>
+  <path d="M10 14h4v5h-4z"/>
+  <!-- Chains -->
+  <circle cx="8" cy="10" r="0.8"/>
+  <circle cx="8" cy="12" r="0.8"/>
+  <circle cx="16" cy="10" r="0.8"/>
+  <circle cx="16" cy="12" r="0.8"/>
+  <path d="M8 10v2M16 10v2" stroke="white" stroke-width="0.5"/>
+  <!-- Skull shape -->
+  <ellipse cx="12" cy="10.5" rx="1.5" ry="1.8"/>
+  <circle cx="11" cy="10" r="0.4" fill="black"/>
+  <circle cx="13" cy="10" r="0.4" fill="black"/>
+</svg>

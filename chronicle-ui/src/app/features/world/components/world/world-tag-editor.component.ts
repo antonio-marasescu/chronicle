@@ -5,10 +5,10 @@ import { CreateLocation } from '../../../../core/types/dtos/write/location-write
 export type TagMetadata = CreateLocation;
 
 const LOCATION_TYPE_ICON_PATHS: Record<LocationType, string> = {
-  [LocationType.City]: '/assets/icons/locations/city.svg',
-  [LocationType.Dungeon]: '/assets/icons/locations/dungeon.svg',
-  [LocationType.Wilderness]: '/assets/icons/locations/wilderness.svg',
-  [LocationType.Other]: '/assets/icons/locations/other.svg'
+  [LocationType.City]: '/icons/locations/city.svg',
+  [LocationType.Dungeon]: '/icons/locations/dungeon.svg',
+  [LocationType.Wilderness]: '/icons/locations/wilderness.svg',
+  [LocationType.Other]: '/icons/locations/other.svg'
 };
 
 @Component({

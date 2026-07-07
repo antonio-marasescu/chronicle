@@ -1,17 +1,21 @@
-<div class="flex w-full h-[calc(100vh-16rem)]">
+<div class="flex w-full h-[calc(100vh-16rem)] bg-base-200">
   <app-world-editor-menu
     [menuItems]="menuItems"
     [selectedAction]="selectedAction()"
     (actionSelect)="onActionSelect($event)"
     (fileSelect)="onFileSelected($event)"
   />
-  @if (showTagEditor()) {
-    <app-world-tag-editor
-      [metadata]="tagMetadata()"
-      (metadataChange)="onTagMetadataChange($event)"
+  <app-world-tag-editor
+    [class.invisible]="!showTagEditor()"
+    [class.pointer-events-none]="!showTagEditor()"
+    [metadata]="tagMetadata()"
+    (metadataChange)="onTagMetadataChange($event)"
+  />
+  <div class="flex-1 h-full relative overflow-hidden">
+    <app-map-editor
+      [action]="currentAction()"
+      [readonly]="false"
+      (tagSelect)="onTagSelect($event)"
     />
-  }
-  <div class="flex-1 h-full">
-    <app-map-editor [action]="currentAction()" [readonly]="false" />
   </div>
 </div>

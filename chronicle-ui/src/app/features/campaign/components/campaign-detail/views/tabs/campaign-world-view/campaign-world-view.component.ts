@@ -1,4 +1,13 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  untracked,
+  viewChild
+} from '@angular/core';
 import { MapEditorComponent } from '../../../../../../world/components/map/map-editor.component';
 import { WorldEditorMenuComponent } from '../../../../../../world/components/world/world-editor-menu.component';
 import {
@@ -13,6 +22,7 @@ import {
 import { MapFacadeService } from '../../../../../../world/services/map/map-facade.service';
 import { MOCK_WORLD_MAPS } from '../../../../../../../core/testing/mocks/world-map.mocks';
 import { LocationType } from '../../../../../../../core/types/enums/location-type.enum';
+import { Tag } from '../../../../../../world/types/map.types';
 
 @Component({
   selector: 'app-campaign-world-view',
@@ -21,9 +31,11 @@ import { LocationType } from '../../../../../../../core/types/enums/location-typ
 })
 export class CampaignWorldViewComponent implements OnInit {
   private readonly mapFacade = inject(MapFacadeService);
+  private readonly mapEditor = viewChild.required(MapEditorComponent);
 
   readonly menuItems: WorldEditorMenuItem[] = [
     { action: WorldEditorMenuAction.PAN, label: 'Pan', icon: 'pan_tool' },
+    { action: WorldEditorMenuAction.SELECT_TAG, label: 'Select Tag', icon: 'touch_app' },
     { action: WorldEditorMenuAction.PLACE_TAG, label: 'Place Tag', icon: 'location_on' },
     {
       action: WorldEditorMenuAction.NONE,
@@ -42,7 +54,7 @@ export class CampaignWorldViewComponent implements OnInit {
     backstory: '',
     locationType: LocationType.City,
     color: '#ef4444',
-    size: 8
+    size: 20
   });
 
   readonly currentAction = computed<MapAction>(() => {
@@ -53,6 +65,8 @@ export class CampaignWorldViewComponent implements OnInit {
           type: MapActionType.PLACE_TAG,
           metadata: this.tagMetadata()
         };
+      case WorldEditorMenuAction.SELECT_TAG:
+        return { type: MapActionType.SELECT_TAG };
       case WorldEditorMenuAction.PAN:
         return { type: MapActionType.PAN };
       default:
@@ -60,9 +74,16 @@ export class CampaignWorldViewComponent implements OnInit {
     }
   });
 
-  readonly showTagEditor = computed(
-    () => this.selectedAction() === WorldEditorMenuAction.PLACE_TAG
-  );
+  readonly selectedTagId = signal<string | null>(null);
+
+  readonly showTagEditor = computed(() => {
+    const action = this.selectedAction();
+    const selectedId = this.selectedTagId();
+    return (
+      action === WorldEditorMenuAction.PLACE_TAG ||
+      (action === WorldEditorMenuAction.SELECT_TAG && selectedId !== null)
+    );
+  });
 
   ngOnInit(): void {
     // Initialize with mock map if no maps loaded
@@ -88,5 +109,33 @@ export class CampaignWorldViewComponent implements OnInit {
 
   onTagMetadataChange(metadata: TagMetadata): void {
     this.tagMetadata.set(metadata);
+
+    const selectedTagId = this.selectedTagId();
+    if (selectedTagId && this.selectedAction() === WorldEditorMenuAction.SELECT_TAG) {
+      this.mapEditor().renderer.updateTag(selectedTagId, {
+        label: metadata.name,
+        color: metadata.color,
+        size: metadata.size,
+        locationType: metadata.locationType
+      });
+    }
+  }
+
+  onTagSelect(tag: Tag | null): void {
+    if (tag) {
+      this.selectedTagId.set(tag.id);
+      this.tagMetadata.set({
+        worldId: '',
+        name: tag.label,
+        description: '',
+        backstory: '',
+        locationType: tag.locationType,
+        color: tag.color,
+        size: tag.size
+      });
+      this.selectedAction.set(WorldEditorMenuAction.SELECT_TAG);
+    } else {
+      this.selectedTagId.set(null);
+    }
   }
 }
