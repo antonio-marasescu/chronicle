@@ -33,18 +33,12 @@ export class MapActionService {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    this.renderer.addTag(location);
+    // TODO: Implement adding location to renderer
+    console.log('Place tag:', location);
   }
 
   private handleSelectTag(x: number, y: number): void {
-    const canvas = document.querySelector('canvas');
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const pixelX = (x - rect.left) * (canvas.width / rect.width);
-    const pixelY = (y - rect.top) * (canvas.height / rect.height);
-
-    const tag = this.renderer.getTagAt(pixelX, pixelY);
-    this.renderer.selectTag(tag ? tag.id : null);
+    // TODO: Implement tag selection
+    console.log('Select tag at:', x, y);
   }
 }
