@@ -13,8 +13,7 @@
       </label>
       <input
         type="text"
-        [value]="metadata().name"
-        (input)="onNameChange($event)"
+        [formField]="tagMetadataForm().name"
         placeholder="Location name"
         class="input input-bordered input-md w-full"
       />
@@ -25,8 +24,7 @@
         <span class="label-text text-base font-medium">Type</span>
       </label>
       <select
-        [value]="metadata().locationType"
-        (change)="onLocationTypeChange($event)"
+        [formField]="tagMetadataForm().locationType"
         class="select select-bordered select-md w-full"
       >
         @for (type of locationTypes; track type) {
@@ -42,8 +40,7 @@
         <span class="label-text text-base font-medium">Description</span>
       </label>
       <textarea
-        [value]="metadata().description"
-        (input)="onDescriptionChange($event)"
+        [formField]="tagMetadataForm().description"
         placeholder="Brief description"
         class="textarea textarea-bordered textarea-md w-full h-24"
       ></textarea>
@@ -54,8 +51,7 @@
         <span class="label-text text-base font-medium">Backstory</span>
       </label>
       <textarea
-        [value]="metadata().backstory"
-        (input)="onBackstoryChange($event)"
+        [formField]="tagMetadataForm().backstory"
         placeholder="Historical background"
         class="textarea textarea-bordered textarea-md w-full h-28"
       ></textarea>
@@ -75,14 +71,12 @@
       <div class="flex gap-3 items-center">
         <input
           type="color"
-          [value]="metadata().color"
-          (input)="onColorChange($event)"
+          [formField]="tagMetadataForm().color"
           class="w-16 h-12 rounded cursor-pointer"
         />
         <input
           type="text"
-          [value]="metadata().color"
-          (input)="onColorChange($event)"
+          [formField]="tagMetadataForm().color"
           class="input input-bordered input-md flex-1"
         />
       </div>
@@ -90,19 +84,16 @@
 
     <div class="form-control">
       <label class="label">
-        <span class="label-text text-base font-medium">Size: {{ metadata().size }}px</span>
+        <span class="label-text text-base font-medium">Size: {{ tagMetadataForm().size().value() }}px</span>
       </label>
       <input
         type="range"
-        min="12"
-        max="40"
-        [value]="metadata().size"
-        (input)="onSizeChange($event)"
+        [formField]="tagMetadataForm().size"
         class="range range-md"
       />
       <div class="flex justify-between text-sm px-2 mt-1">
-        <span>Small</span>
-        <span>Large</span>
+        <span>Small (12px)</span>
+        <span>Large (40px)</span>
       </div>
     </div>
 
@@ -117,27 +108,27 @@
         <div class="relative">
           <div
             class="rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all"
-            [style.background-color]="metadata().color"
-            [style.width.px]="metadata().size * 2"
-            [style.height.px]="metadata().size * 2"
+            [style.background-color]="tagMetadataForm().color().value()"
+            [style.width.px]="tagMetadataForm().size().value() * 2"
+            [style.height.px]="tagMetadataForm().size().value() * 2"
           >
             <img
-              [src]="getLocationIconPath(metadata().locationType)"
+              [src]="currentLocationIconPath()"
               alt="Location icon"
               class="w-full h-full p-1"
-              [style.width.px]="metadata().size * 1.2"
-              [style.height.px]="metadata().size * 1.2"
+              [style.width.px]="tagMetadataForm().size().value() * 1.2"
+              [style.height.px]="tagMetadataForm().size().value() * 1.2"
             />
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          @if (metadata().name) {
-            <div class="text-base font-medium truncate">{{ metadata().name }}</div>
+          @if (tagMetadataForm().name().value()) {
+            <div class="text-base font-medium truncate">{{ tagMetadataForm().name().value() }}</div>
           } @else {
             <div class="text-base text-base-content/50 italic">No name</div>
           }
           <div class="text-sm text-base-content/70">
-            {{ metadata().locationType.charAt(0).toUpperCase() + metadata().locationType.slice(1) }}
+            {{ tagMetadataForm().locationType().value().charAt(0).toUpperCase() + tagMetadataForm().locationType().value().slice(1) }}
           </div>
         </div>
       </div>

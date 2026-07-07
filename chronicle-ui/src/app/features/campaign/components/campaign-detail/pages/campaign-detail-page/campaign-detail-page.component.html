@@ -38,7 +38,9 @@
         </div>
       }
       @case ('world') {
-        <app-campaign-world-container />
+        @if (campaign()) {
+          <app-campaign-world-container [campaign]="campaign()!" />
+        }
       }
       @case ('chapters') {
         <div class="bg-base-100 p-6 rounded-lg shadow-xl">

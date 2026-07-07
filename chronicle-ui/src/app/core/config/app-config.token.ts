@@ -1,11 +1,11 @@
 import { InjectionToken, Provider } from '@angular/core';
 import { AppStages } from '../types/app/app-stages.types';
 
-export interface AppConfig {
+export type AppConfig = {
   apiUrl: string;
   environment: AppStages;
   version: string;
-}
+};
 
 export const APP_CONFIG = new InjectionToken<AppConfig>('AppConfig');
 
