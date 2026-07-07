@@ -8,6 +8,7 @@ export const MOCK_WORLDS: World[] = [
     description: 'A vast medieval fantasy realm',
     backstory:
       'Once a prosperous kingdom united under the Crown of Stars, now fractured and in need of heroes',
+    imageUrl: '',
     locationIds: ['loc-1', 'loc-2'],
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
@@ -18,6 +19,7 @@ export const MOCK_WORLDS: World[] = [
     name: 'Frostheim',
     description: 'A frozen tundra full of ice giants and ancient magic',
     backstory: 'The eternal winter began when the Ice Crown was shattered centuries ago',
+    imageUrl: '',
     locationIds: ['loc-3'],
     createdAt: '2025-02-01T00:00:00Z',
     updatedAt: '2025-02-01T00:00:00Z'
@@ -28,6 +30,7 @@ export const MOCK_WORLDS: World[] = [
     name: 'Aridian Expanse',
     description: 'An endless desert hiding forgotten civilizations',
     backstory: 'The sands hold secrets of a time before recorded history',
+    imageUrl: '',
     locationIds: [],
     createdAt: '2025-03-01T00:00:00Z',
     updatedAt: '2025-03-01T00:00:00Z'

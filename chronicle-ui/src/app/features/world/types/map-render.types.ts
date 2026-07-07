@@ -1,15 +1,8 @@
-export type Point = {
-  x: number;
-  y: number;
-};
+import { LocationType } from '../../../core/types/enums/location-type.enum';
 
-export type OffsetPoint = {
-  offsetX: number;
-  offsetY: number;
-};
-
-export type DrawMetrics = {
-  drawOffsetX: number;
-  drawOffsetY: number;
-  scale: number;
+export const LOCATION_ICON_PATHS: Record<LocationType, string> = {
+  [LocationType.City]: '/icons/locations/city.svg',
+  [LocationType.Dungeon]: '/icons/locations/dungeon.svg',
+  [LocationType.Wilderness]: '/icons/locations/wilderness.svg',
+  [LocationType.Other]: '/icons/locations/other.svg'
 };

@@ -19,10 +19,10 @@ import {
   WorldEditorMenuAction,
   WorldEditorMenuItem
 } from '../../../../../../world/types/world-editor-menu.types';
-import { MapFacadeService } from '../../../../../../world/services/map/map-facade.service';
+import { MapStoreService } from '../../../../../../world/services/map/map-store.service';
 import { MOCK_WORLD_MAPS } from '../../../../../../../core/testing/mocks/world-map.mocks';
 import { LocationType } from '../../../../../../../core/types/enums/location-type.enum';
-import { Tag } from '../../../../../../world/types/map.types';
+import { Location } from '../../../../../../../core/types/dtos/view/location-view.types';
 
 @Component({
   selector: 'app-campaign-world-view',
@@ -30,7 +30,7 @@ import { Tag } from '../../../../../../world/types/map.types';
   templateUrl: './campaign-world-view.component.html'
 })
 export class CampaignWorldViewComponent implements OnInit {
-  private readonly mapFacade = inject(MapFacadeService);
+  private readonly mapStore = inject(MapStoreService);
   private readonly mapEditor = viewChild.required(MapEditorComponent);
 
   readonly menuItems: WorldEditorMenuItem[] = [
@@ -87,15 +87,15 @@ export class CampaignWorldViewComponent implements OnInit {
 
   ngOnInit(): void {
     // Initialize with mock map if no maps loaded
-    if (this.mapFacade.mapList().length === 0) {
+    if (this.mapStore.worldList().length === 0) {
       // Manually add the first mock map
       const mockMap = MOCK_WORLD_MAPS[0];
-      (this.mapFacade as any).maps.set([mockMap]);
-      this.mapFacade.selectMap(mockMap.id);
-    } else if (!this.mapFacade.activeMap()) {
+      (this.mapStore as any).worlds.set([mockMap]);
+      this.mapStore.selectWorld(mockMap.id);
+    } else if (!this.mapStore.activeWorld()) {
       // Select first map if none active
-      const firstMap = this.mapFacade.mapList()[0];
-      this.mapFacade.selectMap(firstMap.id);
+      const firstMap = this.mapStore.worldList()[0];
+      this.mapStore.selectWorld(firstMap.id);
     }
   }
 
@@ -104,7 +104,17 @@ export class CampaignWorldViewComponent implements OnInit {
   }
 
   onFileSelected(file: File): void {
-    this.mapFacade.addMap({ name: file.name, imageUrl: '', layers: [], tags: [] }, file);
+    this.mapStore.addWorld(
+      {
+        campaignId: '',
+        name: file.name,
+        description: '',
+        backstory: '',
+        imageUrl: '',
+        locationIds: []
+      },
+      file
+    );
   }
 
   onTagMetadataChange(metadata: TagMetadata): void {
@@ -112,8 +122,8 @@ export class CampaignWorldViewComponent implements OnInit {
 
     const selectedTagId = this.selectedTagId();
     if (selectedTagId && this.selectedAction() === WorldEditorMenuAction.SELECT_TAG) {
-      this.mapEditor().renderer.updateTag(selectedTagId, {
-        label: metadata.name,
+      this.mapStore.updateLocation(selectedTagId, {
+        name: metadata.name,
         color: metadata.color,
         size: metadata.size,
         locationType: metadata.locationType
@@ -121,17 +131,17 @@ export class CampaignWorldViewComponent implements OnInit {
     }
   }
 
-  onTagSelect(tag: Tag | null): void {
-    if (tag) {
-      this.selectedTagId.set(tag.id);
+  onTagSelect(location: Location | null): void {
+    if (location) {
+      this.selectedTagId.set(location.id);
       this.tagMetadata.set({
         worldId: '',
-        name: tag.label,
+        name: location.name,
         description: '',
         backstory: '',
-        locationType: tag.locationType,
-        color: tag.color,
-        size: tag.size
+        locationType: location.locationType,
+        color: location.color,
+        size: location.size
       });
       this.selectedAction.set(WorldEditorMenuAction.SELECT_TAG);
     } else {

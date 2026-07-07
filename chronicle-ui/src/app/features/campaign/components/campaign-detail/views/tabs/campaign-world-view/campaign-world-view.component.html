@@ -12,10 +12,6 @@
     (metadataChange)="onTagMetadataChange($event)"
   />
   <div class="flex-1 h-full relative overflow-hidden">
-    <app-map-editor
-      [action]="currentAction()"
-      [readonly]="false"
-      (tagSelect)="onTagSelect($event)"
-    />
+    <app-map-editor />
   </div>
 </div>

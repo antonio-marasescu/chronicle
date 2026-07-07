@@ -4,6 +4,7 @@ export type World = {
   name: string;
   description: string;
   backstory: string;
+  imageUrl: string;
   locationIds: string[];
   createdAt: string;
   updatedAt: string;

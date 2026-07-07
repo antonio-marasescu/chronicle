@@ -1,12 +1,3 @@
-<div class="h-full w-full relative">
-  <canvas
-    #mapCanvas
-    class="absolute inset-0 h-full w-full"
-    (click)="onCanvasClick($event)"
-    (wheel)="onWheel($event)"
-    (mousedown)="onMouseDown($event)"
-    (mousemove)="onMouseMove($event)"
-    (mouseup)="onMouseUp()"
-    (mouseleave)="onMouseUp()"
-  ></canvas>
+<div class="h-full w-full">
+  <canvas #mapCanvas class="w-full h-full block"></canvas>
 </div>
