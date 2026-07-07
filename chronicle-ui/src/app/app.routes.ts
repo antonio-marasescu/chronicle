@@ -14,9 +14,5 @@ export const routes: Routes = [
   {
     path: AppRoutes.Campaign.Base,
     loadChildren: () => import('./features/campaign/campaign.routes').then(m => m.CAMPAIGN_ROUTES)
-  },
-  {
-    path: AppRoutes.World.Base,
-    loadChildren: () => import('./features/world/world.routes').then(m => m.WORLD_ROUTES)
   }
 ];
