@@ -44,6 +44,10 @@ export class MapStoreService {
     }
   }
 
+  setWorlds(worlds: World[]): void {
+    this.worlds.set(worlds);
+  }
+
   selectWorld(id: string): void {
     this.activeWorldId.set(id);
   }

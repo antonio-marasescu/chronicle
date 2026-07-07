@@ -1,10 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import * as THREE from 'three';
+import { World } from '../../../../core/types/dtos/view/world-view.types';
+import { MapGraphicsService } from './map-graphics.service';
 
 @Injectable()
 export class MapRendererService {
   readonly initialized = signal(false);
 
+  private readonly mapGraphics = inject(MapGraphicsService);
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.OrthographicCamera;
@@ -44,42 +47,33 @@ export class MapRendererService {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xf3f4f6);
 
-    // Load a texture and display it on a plane
-    this.loadTexture('/assets/images/campaigns/mock-map.jpg');
-
     this.initialized.set(true);
 
     // Start render loop
     this.animate();
   }
 
-  private loadTexture(url: string): void {
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(
-      url,
-      texture => {
-        const aspect = texture.image.width / texture.image.height;
-        const width = 1000;
-        const height = width / aspect;
+  async loadMap(world: World): Promise<void> {
+    try {
+      const mesh = await this.mapGraphics.createMap(world, 1000);
 
-        const geometry = new THREE.PlaneGeometry(width, height);
-        const material = new THREE.MeshBasicMaterial({
-          map: texture,
-          side: THREE.DoubleSide
-        });
-
-        const plane = new THREE.Mesh(geometry, material);
-        plane.name = 'map';
-        this.scene.add(plane);
-
-        // Fit camera to map
-        this.fitCameraToMap(width, height);
-      },
-      undefined,
-      error => {
-        console.error('Error loading texture:', error);
+      // Remove existing map if present
+      const existingMap = this.scene.getObjectByName('map');
+      if (existingMap) {
+        this.scene.remove(existingMap);
       }
-    );
+
+      this.scene.add(mesh);
+
+      // Fit camera to map
+      const geometry = mesh.geometry as THREE.PlaneGeometry;
+      const width = geometry.parameters.width;
+      const height = geometry.parameters.height;
+      this.fitCameraToMap(width, height);
+    } catch (error) {
+      console.error('Error loading map:', error);
+      throw error;
+    }
   }
 
   private fitCameraToMap(width: number, height: number): void {

@@ -1,5 +1,6 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
-import { Campaign } from '../../../../../../core/types/dtos/view/campaign-view.types';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { CampaignWithWorld } from '../../../../../../core/types/dtos/view/campaign-view.types';
+import { MapStoreService } from '../../../../../world/services/map/map-store.service';
 import { AppNavigationService } from '../../../../../../core/services/app-navigation.service';
 import { SwitchButtonComponent } from '../../../../../../core/components/switch-button/switch-button.component';
 import { LoadingSpinnerComponent } from '../../../../../../core/components/loading-spinner/loading-spinner.component';
@@ -28,9 +29,9 @@ import { CampaignDetailMode } from '../../../../types/campaign-detail.types';
 })
 export class CampaignDetailPageComponent {
   private readonly navigation = inject(AppNavigationService);
+  private readonly mapStore = inject(MapStoreService);
 
-  // Inputs from resolver and params (query params auto-bind with withComponentInputBinding)
-  campaign = input<Campaign | undefined>();
+  campaign = input<CampaignWithWorld | undefined>();
   id = input<string | undefined>();
   tab = input.required({
     transform: (value: TabType | undefined): TabType => value ?? 'overview'
@@ -39,13 +40,21 @@ export class CampaignDetailPageComponent {
     transform: (value: CampaignDetailMode | undefined): CampaignDetailMode =>
       value ?? CampaignDetailMode.View
   });
-
   protected readonly CampaignDetailMode = CampaignDetailMode;
-
   protected readonly isEditMode = computed(() => this.mode() === CampaignDetailMode.Edit);
   protected readonly isLoaded = computed(
     () => this.mode() === CampaignDetailMode.Create || this.campaign() !== undefined
   );
+
+  constructor() {
+    effect(() => {
+      const campaign = this.campaign();
+      if (campaign?.world) {
+        this.mapStore.setWorlds([campaign.world]);
+        this.mapStore.selectWorld(campaign.world.id);
+      }
+    });
+  }
 
   protected navigateToTab(tab: TabType): void {
     const campaignId = this.id();
